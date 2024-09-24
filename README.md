@@ -26,8 +26,8 @@ custom_module \
 Upload the compiled contract class file to the program registry:
 
 ```console
-curl --location 'http://program-registery.api.herodotus.cloud/upload-program?apiKey={API_KEY}' \
---form 'program=@"custom_module_custom_module.compiled_contract_class.json"'
+curl --location 'https://sharp.api.herodotus.cloud/submit-program?apiKey={API_KEY}' \
+--form 'programFile=@"custom_module_custom_module.compiled_contract_class.json"'
 ```
 
 This request will return a program hash as a response:
