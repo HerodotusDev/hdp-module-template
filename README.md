@@ -33,7 +33,13 @@ curl --location 'https://sharp.api.herodotus.cloud/submit-program?apiKey={API_KE
 This request will return a program hash as a response:
 
 ```console
-0x64041a339b1edd10de83cf031cfa938645450f971d2527c90d4c2ce68d7d412
+0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e
+```
+
+To comfirm if the program is registered, you can query the program registry:
+
+```sh
+curl --location 'http://program-registery.api.herodotus.cloud/get-metadata?program_hash=0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e'
 ```
 
 ## 3. Request
@@ -46,24 +52,36 @@ Provide the correct program hash from the program registry. Input data should be
 curl --location 'https://hdp.api.herodotus.cloud/submit-batch-query?apiKey={API_KEY}' \
 --header 'Content-Type: application/json' \
 --data '{
-    "destinationChainId": "ETHEREUM_SEPOLIA",
-    "tasks": [
+  "destinationChainId": "ETHEREUM_SEPOLIA",
+  "tasks": [
+    {
+      "type": "Module",
+      "programHash": "0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e",
+      "inputs": [
         {
-        "type": "Module",
-        "programHash": "0x64041a339b1edd10de83cf031cfa938645450f971d2527c90d4c2ce68d7d412",
-        "inputs": [
-            {
-            "visibility": "private",
-            "value": "0x5222a4"
-            },
-            {
-            "visibility": "public",
-            "value": "0x00000000000000000000000013cb6ae34a13a0977f4d7101ebc24b87bb23f0d5"
-            }
-        ]
+          "visibility": "public",
+          "value": "0x3"
+        },
+        {
+          "visibility": "public",
+          "value": "0x5222A4"
+        },
+        {
+          "visibility": "public",
+          "value": "0x5222A7"
+        },
+        {
+          "visibility": "public",
+          "value": "0x5222C4"
+        },
+        {
+          "visibility": "public",
+          "value": "0x13cb6ae34a13a0977f4d7101ebc24b87bb23f0d5"
         }
-    ]
-    }'
+      ]
+    }
+  ]
+}'
 ```
 
 ## Versions
