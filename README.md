@@ -2,6 +2,28 @@
 
 This is a public template to quickly start your HDP (Herodotus Data Processor) custom module development. For more information, please refer to the [HDP Docs](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
 
+## Quick Start
+
+First put environment variables in `.env` file:
+
+Setup the project with compiled cairo program and proper python environment:
+
+```sh
+make setup
+```
+
+Build custom module program:
+
+```sh
+make build-cairo
+```
+
+Run with hdp pipeline locally:
+
+```sh
+RUST_LOG=debug make run-hdp
+```
+
 ## 1. Build
 
 Build the compiled contract class file:
