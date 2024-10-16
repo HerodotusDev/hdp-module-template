@@ -5,6 +5,12 @@ This is a public template to quickly start your HDP (Herodotus Data Processor) c
 ## Quick Start
 
 First put environment variables in `.env` file:
+Also download `hdp` cli if haven't:
+
+```
+# Install with cargo
+cargo install --git https://github.com/HerodotusDev/hdp/  --locked --force hdp-cli
+```
 
 Setup the project with compiled cairo program and proper python environment:
 
