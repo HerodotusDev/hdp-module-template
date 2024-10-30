@@ -17,7 +17,7 @@ In the `/custom_module` directory, you can define your own module using the `hdp
 
 ### 1. Setup
 
-Copy the environment variables from the [example file](./env.example) into a `.env` file.
+Copy the environment variables from the [example file](.env.example) into a `.env` file.
 
 Set up the project by compiling the Cairo program and preparing the Python environment:
 
