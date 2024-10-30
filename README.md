@@ -1,6 +1,6 @@
 # HDP Module Template
 
-This public template provides a quick start for developing custom modules with the HDP (Herodotus Data Processor). For more information, refer to the [HDP Documentation](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
+This template provides a quick start for developing custom modules with the HDP (Herodotus Data Processor). For more information, refer to the [HDP Documentation](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
 
 ## Versions
 
@@ -11,13 +11,13 @@ This template is compatible with the following versions:
 
 ## How to Write an HDP Module
 
-In the `/custom_module` directory, you can define your own module using the `hdp_cairo` library.
+In the `/custom_module` directory, you can define your own module using the `hdp_cairo` library, which provides various headers, account tools, and storage memorization functions. For examples, refer to the [example contracts](https://github.com/HerodotusDev/hdp-test/tree/main/contracts).
 
 ## Running the HDP Module Locally
 
 ### 1. Setup
 
-Copy the environment variables from the [example file](.env.example) into a `.env` file.
+First, configure the environment to run HDP properly. Copy the environment variables from the [example file](.env.example) into a `.env` file. If you are using the latest environment, the only value you may need to change is marked as `{YOUR-RPC-URL}`.
 
 Set up the project by compiling the Cairo program and preparing the Python environment:
 
@@ -25,21 +25,25 @@ Set up the project by compiling the Cairo program and preparing the Python envir
 make setup
 ```
 
+You should now be in a Python virtual environment.
+
 ### 2. Build the Module
 
-Build the custom module. Ensure the module is already created. If not, complete the previous step first.
+Build the custom module. HDP requires a compiled Cairo program to run.
+
+After completing your custom module in the `/custom_module` folder (following the [instructions above](#how-to-write-an-hdp-module)), build it with:
 
 ```sh
 make build-cairo
 ```
 
-Or navigate to the root of the module folder and run:
+Or navigate to the root of the Cairo program folder and run:
 
 ```sh
 scarb build
 ```
 
-This should generate a new build file in the following structure:
+This should generate a new build file with the following structure:
 
 ```
 custom_module \
@@ -52,7 +56,7 @@ custom_module \
 
 ### 3. Run the HDP Module
 
-If you haven’t installed the `hdp` CLI binary, install it with:
+If you haven’t installed the `hdp` CLI binary, install it using:
 
 ```sh
 # Install with Cargo
@@ -65,13 +69,15 @@ Run the HDP module locally with:
 RUST_LOG=debug make run-hdp
 ```
 
-To understand the command breakdown, it uses `0x5222A4` as the first public input and specifies the module’s build JSON file. `-p input.json -b batch.json` runs the preprocessing step, while `-c cairo.pie` initiates trace generation. The `--save-fetch-keys-file key.json` option saves the keys of fetched data for debugging.
+Here’s a breakdown of the command: it uses `0x5222A4` as the first public input and specifies the module’s build JSON file. The flags `-p input.json -b batch.json` run the preprocessing step, while `-c cairo.pie` initiates trace generation. The `--save-fetch-keys-file key.json` option saves the keys of fetched data for debugging.
+
+For multi-input configurations with various visibility settings, you can separate inputs with commas, like this: `public.0x1, public.0x1, private.0x2`. Ensure `--local-class-path` matches the path from which the command is run.
 
 ```sh
 hdp run-module --module-inputs public.0x5222A4 --local-class-path ./custom_module/target/dev/custom_module_get_parent.compiled_contract_class.json -p input.json -b batch.json --save-fetch-keys-file key.json -c cairo.pie
 ```
 
-Successful execution should display logs similar to this:
+Successful execution should display logs similar to the following:
 
 ```console
 2024-10-30T11:26:52.369335Z  INFO hdp::cairo_runner::run: number of steps: 22959
@@ -110,7 +116,7 @@ To confirm program registration, query the registry:
 curl --location 'http://program-registery.api.herodotus.cloud/get-metadata?program_hash=0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e'
 ```
 
-## 2. Submit a Request to the HDP Module
+### 2. Submit a Request to the HDP Module
 
 With the program hash from the registry, submit a request to the HDP:
 
