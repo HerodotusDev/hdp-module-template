@@ -59,4 +59,4 @@ source "$VENV_PATH/bin/activate" || { echo "Failed to activate virtual environme
 echo "Updating dependencies..."
 pip install -r requirements.txt || { echo "Failed to install requirements."; exit 1; }
 pip install packages/cairo-lang-0.13.1.zip || { echo "Failed to install cairo-lang-0.13.1."; exit 1; }
-pip install hdp-cairo-dev==0.0.11 || { echo "Failed to install the package."; exit 1; }
+pip install hdp-cairo-dev==0.0.15 || { echo "Failed to install the package."; exit 1; }

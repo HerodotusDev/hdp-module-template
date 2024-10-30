@@ -4,8 +4,8 @@
 
 #[starknet::contract]
 mod get_parent {
-    use hdp_cairo::memorizer::header_memorizer::HeaderMemorizerTrait;
-    use hdp_cairo::{HDP, memorizer::header_memorizer::{HeaderKey, HeaderMemorizerImpl}};
+    use hdp_cairo::evm::header::HeaderTrait;
+    use hdp_cairo::{HDP, evm::header::{HeaderKey, HeaderImpl}};
 
     #[storage]
     struct Storage {}
@@ -13,7 +13,7 @@ mod get_parent {
     #[external(v0)]
     pub fn main(ref self: ContractState, hdp: HDP, block_number: u32) -> u256 {
         hdp
-            .header_memorizer
-            .get_parent(HeaderKey { chain_id: 11155111, block_number: block_number.into() })
+            .evm
+            .header_get_parent(HeaderKey { chain_id: 11155111, block_number: block_number.into() })
     }
 }

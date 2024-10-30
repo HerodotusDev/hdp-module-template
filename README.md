@@ -9,7 +9,7 @@ Also download `hdp` cli if haven't:
 
 ```
 # Install with cargo
-cargo install --git https://github.com/HerodotusDev/hdp/  --locked --force hdp-cli
+cargo install --git https://github.com/HerodotusDev/hdp/ --tag v0.8.0 --locked --force hdp-cli
 ```
 
 Setup the project with compiled cairo program and proper python environment:
