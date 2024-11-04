@@ -7,7 +7,7 @@ This template provides a quick start for developing custom modules with the HDP 
 This template is compatible with the following versions:
 
 - [HDP CLI | 0d985094f94b641e38b4d8267357f70e1899c70d](https://github.com/HerodotusDev/hdp/tree/0d985094f94b641e38b4d8267357f70e1899c70d)
-- [HDP Cairo | f160f8eae203d96b001a9b3fc33a9e7018eb69f5](https://github.com/HerodotusDev/hdp-cairo/tree/f160f8eae203d96b001a9b3fc33a9e7018eb69f5)
+- hdp-cairo as git submodule
 
 ## How to Write an HDP Module
 
@@ -19,7 +19,7 @@ In the `/custom_module` directory, you can define your own module using the `hdp
 
 First, configure the environment to run HDP properly. Copy the environment variables from the [example file](.env.example) into a `.env` file. If you are using the latest environment, the only value you may need to change is marked as `{YOUR-RPC-URL}`.
 
-Set up the project by compiling the Cairo program and preparing the Python environment:
+Set up the project by compiling the Cairo program and preparing the Python environment from given cairo submodule:
 
 ```sh
 make setup
