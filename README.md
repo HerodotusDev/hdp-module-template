@@ -97,6 +97,13 @@ Verify deployment:
 curl --location 'http://program-registery.api.herodotus.cloud/get-metadata?program_hash=YOUR_PROGRAM_HASH'
 ```
 
+This request returns a program hash, for example:
+```json
+{
+  "programHash": "0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e"
+}
+```
+
 ### 2. Submit Module Request
 ```sh
 curl --location 'https://hdp.api.herodotus.cloud/submit-batch-query?apiKey={API_KEY}' \
