@@ -1,0 +1,15 @@
+{
+    "destinationChainId": "ETHEREUM_SEPOLIA",
+    "tasks": [
+        {
+            "type": "Module",
+            "localClassPath": "./local_contract.json",
+            "inputs": [
+                {
+                    "visibility": "public",
+                    "value": "0x5222A4"
+                }
+            ]
+        }
+    ]
+}
