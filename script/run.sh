@@ -31,11 +31,24 @@ fi
 
 source .env
 
+# Create output directory
+OUTPUT_DIR="output"
+mkdir -p "$OUTPUT_DIR"
+
+# Create empty files for output (optional, but ensures files exist)
+touch "$OUTPUT_DIR/cairo.pie" "$OUTPUT_DIR/input.json" "$OUTPUT_DIR/batch.json"
+
 # Run docker command
 docker run \
-  -v $(pwd)/"$REQUEST_PATH":/hdp-runner/request.json \
-  -v $(pwd)/"$COMPILED_CONTRACT_PATH":/hdp-runner/local_contract.json \
+  -v "$(pwd)/$REQUEST_PATH":/hdp-runner/request.json \
+  -v "$(pwd)/$COMPILED_CONTRACT_PATH":/hdp-runner/local_contract.json \
+  -v "$(pwd)/$OUTPUT_DIR/cairo.pie":/hdp-runner/cairo.pie \
+  -v "$(pwd)/$OUTPUT_DIR/input.json":/hdp-runner/input.json \
+  -v "$(pwd)/$OUTPUT_DIR/batch.json":/hdp-runner/batch.json \
   -e PROVIDER_URL_ETHEREUM_SEPOLIA="$PROVIDER_URL_ETHEREUM_SEPOLIA" \
   -e PROVIDER_URL_STARKNET_SEPOLIA="$PROVIDER_URL_STARKNET_SEPOLIA" \
   -e RPC_URL="$PROVIDER_URL_ETHEREUM_SEPOLIA" \
   dataprocessor/hdp-runner:latest
+
+# After the Docker run, the output files will be in the output directory
+echo "Output files are saved in the '$OUTPUT_DIR' directory."
