@@ -56,7 +56,7 @@ docker_args=(
 )
 
 # Add Starknet environment variable if it exists
-if [ ! -z "$PROVIDER_URL_STARKNET_SEPOLIA" ]; then
+if [ ! -z "${PROVIDER_URL_STARKNET_SEPOLIA:-}" ]; then
     docker_args+=(
         "-e" "PROVIDER_URL_STARKNET_SEPOLIA=$PROVIDER_URL_STARKNET_SEPOLIA"
     )
