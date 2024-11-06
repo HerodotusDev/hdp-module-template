@@ -1,169 +1,180 @@
 # HDP Module Template
 
-This template provides a quick start for developing custom modules with the HDP (Herodotus Data Processor). For more information, refer to the [HDP Documentation](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
+A quickstart template for developing custom modules with the Herodotus Data Processor (HDP). Verified on-chain state can be accessed in Cairo contracts using custom syscall invoke functions.
 
-## Versions
+[📚 View Full Documentation](https://docs.herodotus.dev/herodotus-docs/developers/data-processor)
 
-This template is compatible with the following versions:
+## 📋 Prerequisites
 
-- [HDP CLI | 0d985094f94b641e38b4d8267357f70e1899c70d](https://github.com/HerodotusDev/hdp/tree/0d985094f94b641e38b4d8267357f70e1899c70d)
-- hdp-cairo as git submodule
+- [Scarb](https://docs.swmansion.com/scarb/download) (v2.6.5+)
+- Docker
+- Ethereum Sepolia RPC URL
 
-## How to Write an HDP Module
+## 🔧 Setup & Local Development
 
-In the `/custom_module` directory, you can define your own module using the `hdp_cairo` library, which provides various headers, account tools, and storage memorization functions. For examples, refer to the [example contracts](https://github.com/HerodotusDev/hdp-test/tree/main/contracts).
+1. **Configure Environment**
 
-## Running the HDP Module Locally
+   - Copy `.env.example` to `.env`:
+     ```sh
+     cp .env.example .env
+     ```
+   - Add your Ethereum Sepolia RPC URL to the `.env` file.
 
-### 1. Setup
+2. **Build the Module**
 
-First, configure the environment to run HDP properly. Copy the environment variables from the [example file](.env.example) into a `.env` file. If you are using the latest environment, the only value you may need to change is marked as `{YOUR-RPC-URL}`.
+   ```sh
+   scarb build
+   ```
 
-Set up the project by compiling the Cairo program and preparing the Python environment from given cairo submodule:
+   This command generates:
+
+   ```
+   custom_module/
+     ├── src/
+     │   └── lib.cairo
+     └── target/
+         └── dev/
+             └── custom_module.compiled_contract_class.json
+   ```
+
+3. **Configure Input Parameters**
+
+   Edit `request.json`. **Only modify the `inputs` section; leave other fields unchanged**. Here's an example:
+
+   ```json
+   {
+     "destinationChainId": "ETHEREUM_SEPOLIA", // DO NOT EDIT
+     "tasks": [
+       {
+         "type": "Module", // DO NOT EDIT
+         "localClassPath": "./local_contract.json", // DO NOT EDIT
+         "inputs": [
+           {
+             "visibility": "public", // Can be "public" or "private"
+             "value": "0x5222A4"
+           }
+         ]
+       }
+     ]
+   }
+   ```
+
+4. **Run Locally**
+
+   Ensure Docker is running, then use one of the following commands:
+
+   **Generic command structure:**
+
+   ```sh
+   ./script/run.sh <request_file_path> <compiled_contract_class_path> [output_directory]
+   ```
+
+   **Example with default paths:**
+
+   ```sh
+   ./script/run.sh request.json custom_module/target/dev/custom_module_get_parent.compiled_contract_class.json ./output
+   ```
+
+   If run successfully, the log will display:
+
+   ```console
+   ❯ ./script/run.sh request.json custom_module/target/dev/custom_module_get_parent.compiled_contract_class.json
+   2023-11-06T07:39:51.314675Z  INFO hdp::preprocessor::module_registry: Contract class fetched successfully from local path: "./local_contract.json"
+   2023-11-06T07:39:51.314718Z  INFO hdp::preprocessor::compile::module: Target task: Module {
+     program_hash: 0x62c37715e000abfc6f931ee05a4ff1be9d7832390b31e5de29d197814db8156,
+     inputs: [
+       ModuleInput {
+         visibility: Public,
+         value: 0x5222a4,
+       },
+     ],
+     local_class_path: Some("./local_contract.json"),
+   }
+   ...
+   Output files are saved in the 'output' directory.
+   ```
+
+   In the `output` folder, you will find:
+
+   ```
+   output/
+     ├── batch.json
+     ├── cairo.pie
+     └── input.json
+   ```
+
+### Development Resources
+
+- Install [Cairo1 Syscalls](https://github.com/HerodotusDev/hdp-cairo/tree/main/cairo1_syscall_binding) via Scarb as a dependency.
+- Browse [Example Contracts](https://github.com/HerodotusDev/hdp-test/tree/main/contracts) for implementation references.
+
+## 📘 Technical Specifications
+
+### Module Constraints
+
+- **Stateless Execution**: No persistent storage between executions.
+- **Limited Syscalls**: Standard StarkNet syscalls are not supported.
+- **HDP Syscall Interface**: Exclusive access to cross-chain data, including:
+  - Ethereum block headers
+  - Account states
+  - Storage slots
+  - Transactions & receipts
+
+## 🚀 API Deployment
+
+Once the module is working, it can be deployed to the program registry and then invoked via the API. This enables the on-chain decommitment of the module's result.
+
+### 1. Deploy to Program Registry
+
+Use the following command to deploy your compiled contract class to the program registry:
 
 ```sh
-make setup
-```
-
-You should now be in a Python virtual environment.
-
-### 2. Build the Module
-
-Build the custom module. HDP requires a compiled Cairo program to run.
-
-After completing your custom module in the `/custom_module` folder (following the [instructions above](#how-to-write-an-hdp-module)), build it with:
-
-```sh
-make build-cairo
-```
-
-Or navigate to the root of the Cairo program folder and run:
-
-```sh
-scarb build
-```
-
-This should generate a new build file with the following structure:
-
-```
-custom_module \
-    src \
-       lib.cairo
-    target \
-       dev \
-          custom_module_custom_module.compiled_contract_class.json
-```
-
-### 3. Run the HDP Module
-
-If you haven’t installed the `hdp` CLI binary, install it using:
-
-```sh
-# Install with Cargo
-cargo install --git https://github.com/HerodotusDev/hdp/ --tag v0.8.0 --locked --force hdp-cli
-```
-
-Run the HDP module locally with:
-
-```sh
-RUST_LOG=debug make run-hdp
-```
-
-Here’s a breakdown of the command: it uses `0x5222A4` as the first public input and specifies the module’s build JSON file. The flags `-p input.json -b batch.json` run the preprocessing step, while `-c cairo.pie` initiates trace generation. The `--save-fetch-keys-file key.json` option saves the keys of fetched data for debugging.
-
-For multi-input configurations with various visibility settings, you can separate inputs with commas, like this: `public.0x1, public.0x1, private.0x2`. Ensure `--local-class-path` matches the path from which the command is run.
-
-```sh
-hdp run-module --module-inputs public.0x5222A4 --local-class-path ./custom_module/target/dev/custom_module_get_parent.compiled_contract_class.json -p input.json -b batch.json --save-fetch-keys-file key.json -c cairo.pie
-```
-
-Successful execution should display logs similar to the following:
-
-```console
-2024-10-30T11:26:52.369335Z  INFO hdp::cairo_runner::run: number of steps: 22959
-2024-10-30T11:26:52.369413Z  INFO hdp::cairo_runner::run: cairo run output: CairoRunOutput {
-    tasks_root: 0x40338e4a3bf4160b52544dc2e0cac3710905683083d7af26af6656cd2c1a9828,
-    results_root: 0xd666f65da14252d1c31f5ea28b0b95a155278e813ecf6ecd262598afb112e276,
-    results: [
-        264350994751032333482775472856390598011,
-    ],
-}
-2024-10-30T11:26:52.369733Z  INFO hdp::processor: 2️⃣  Processor completed successfully
-2024-10-30T11:26:52.369769Z  INFO hdp::hdp_run: finished processing the data, saved pie file in cairo.pie
-2024-10-30T11:26:52.369824Z  INFO hdp_cli::cli: HDP Cli Finished in: 11.065157458s
-```
-
-## Deploying and Running the HDP Module via Server
-
-### 1. Deploy the HDP Module
-
-Upload the compiled contract class file to the program registry:
-
-```console
 curl --location 'https://sharp.api.herodotus.cloud/submit-program?apiKey={API_KEY}' \
 --form 'programFile=@"custom_module_custom_module.compiled_contract_class.json"'
 ```
 
-This request returns a program hash, for example:
-
-```console
-0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e
-```
-
-To confirm program registration, query the registry:
+Verify the deployment:
 
 ```sh
-curl --location 'http://program-registery.api.herodotus.cloud/get-metadata?program_hash=0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e'
+curl --location 'http://program-registery.api.herodotus.cloud/get-metadata?program_hash=YOUR_PROGRAM_HASH'
 ```
 
-### 2. Submit a Request to the HDP Module
+This request returns a program hash, for example:
 
-With the program hash from the registry, submit a request to the HDP:
+```json
+{
+  "programHash": "0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e"
+}
+```
 
-Use the correct program hash and provide input data for the `pub fn main()` function.
+### 2. Submit Module Request
 
-```console
+Use the following command to submit a module request:
+
+```sh
 curl --location 'https://hdp.api.herodotus.cloud/submit-batch-query?apiKey={API_KEY}' \
 --header 'Content-Type: application/json' \
 --data '{
   "destinationChainId": "ETHEREUM_SEPOLIA",
-  "tasks": [
-    {
-      "type": "Module",
-      "programHash": "0xaae117f9cdfa4fa4d004f84495c942adebf17f24aec8f86e5e6ea29956b47e",
-      "inputs": [
-        {
-          "visibility": "public",
-          "value": "0x3"
-        },
-        {
-          "visibility": "public",
-          "value": "0x5222A4"
-        },
-        {
-          "visibility": "public",
-          "value": "0x5222A7"
-        },
-        {
-          "visibility": "public",
-          "value": "0x5222C4"
-        },
-        {
-          "visibility": "public",
-          "value": "0x13cb6ae34a13a0977f4d7101ebc24b87bb23f0d5"
-        }
-      ]
-    }
-  ]
+  "tasks": [{
+    "type": "Module",
+    "programHash": "YOUR_PROGRAM_HASH",
+    "inputs": [
+      {"visibility": "public", "value": "0x3"},
+      {"visibility": "public", "value": "0x5222A4"}
+      // Additional inputs as needed
+    ]
+  }]
 }'
 ```
 
-## Tool Versions
+**Note**: Remove the comments in the JSON data before executing the command, as JSON does not support comments.
 
-The versions used in this template are:
+## 🛠️ Tool Versions
 
-```console
-❯ scarb --version
+Ensure that you are using compatible versions of the tools:
+
+```
 scarb 2.6.5 (d49f54394 2024-06-11)
 cairo: 2.6.4 (https://crates.io/crates/cairo-lang-compiler/2.6.4)
 sierra: 1.5.0
