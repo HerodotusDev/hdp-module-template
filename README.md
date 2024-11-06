@@ -66,13 +66,13 @@ A quickstart template for developing custom modules with the Herodotus Data Proc
    **Generic command structure:**
 
    ```sh
-   ./script/run.sh <request_file_path> <compiled_contract_class_path>
+   ./script/run.sh <request_file_path> <compiled_contract_class_path> [output_directory]
    ```
 
    **Example with default paths:**
 
    ```sh
-   ./script/run.sh request.json custom_module/target/dev/custom_module_get_parent.compiled_contract_class.json
+   ./script/run.sh request.json custom_module/target/dev/custom_module_get_parent.compiled_contract_class.json ./output
    ```
 
    If run successfully, the log will display:
