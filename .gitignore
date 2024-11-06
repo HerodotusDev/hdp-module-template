@@ -1,9 +1,3 @@
-target
+*/target
 .env
-build
-cairo-programs
-venv
-batch.json
-cairo.pie
-key.json
-input.json
+output
