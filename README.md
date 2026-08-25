@@ -149,26 +149,27 @@ This request returns a program hash, for example:
 
 ### 2. Submit Module Request
 
-Use the following command to submit a module request:
+`/submit-batch-query` is retired. Schedule work through the Data Processor API:
 
 ```sh
-curl --location 'https://hdp.api.herodotus.cloud/submit-batch-query?apiKey={API_KEY}' \
---header 'Content-Type: application/json' \
---data '{
-  "destinationChainId": "ETHEREUM_SEPOLIA",
-  "tasks": [{
-    "type": "Module",
-    "programHash": "YOUR_PROGRAM_HASH",
-    "inputs": [
-      {"visibility": "public", "value": "0x3"},
-      {"visibility": "public", "value": "0x5222A4"}
-      // Additional inputs as needed
-    ]
-  }]
-}'
+curl -X POST https://hdp.api.herodotus.cloud/tasks \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: {API_KEY}" \
+  -d '{
+    "destination_chain_id": 11155111,
+    "input": {
+      "params": [],
+      "compiled_class": { "<<INSERT_COMPILED_CLASS>>": true },
+      "entry_points_by_type": {
+        "EXTERNAL": [],
+        "L1_HANDLER": [],
+        "CONSTRUCTOR": []
+      }
+    }
+  }'
 ```
 
-**Note**: Remove the comments in the JSON data before executing the command, as JSON does not support comments.
+See [Create task](https://docs.herodotus.cloud/data-processor-api/create-task) and [Upload module](https://docs.herodotus.cloud/data-processor-api/upload-module) for the full request shape.
 
 ## 🛠️ Tool Versions
 
